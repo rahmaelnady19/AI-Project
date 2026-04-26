@@ -17,26 +17,16 @@ class AnimalStacker:
         
         self.num_animals = num_animals
         
-        # Dynamic orders method instead of dictionary
         self.reset_state()
-        
+    # Dynamic orders method instead of dictionary
     def get_orders(self):
-
-        if self.num_animals == 3:
-            return [4, 3, 2]    # Panda, Fox, Turtle (big to small)
-        elif self.num_animals == 4:
-            return [5, 4, 3, 2]  # Elephant, Panda, Fox, Turtle
-        elif self.num_animals == 5:
-            return [5, 4, 3, 2, 1]  # Elephant, Panda, Fox, Turtle, Chick
-        else:
             # Default for other sizes: largest to smallest
             return list(range(self.num_animals, 0, -1))
         
     def reset_state(self):
-        animals = self.get_orders()  # This already returns [big, ..., small]
-        
+        animals = self.get_orders()  
         self.state = [
-            animals,  # All animals start on peg 0 (big at bottom, small on top)
+            animals,  # All animals start on peg 0
             [],       
             []        
         ]
@@ -44,7 +34,7 @@ class AnimalStacker:
         self.goal_state = [
             [],                       
             [],                       
-            self.get_orders()  # Goal: all animals on peg 2 (big at bottom, small on top)
+            self.get_orders()  # all animals on peg 2 
         ]
         
     def set_level(self, num_animals):
@@ -61,24 +51,22 @@ class AnimalStacker:
         if not state[to_peg]:  
             return True
         
-        top_from = state[from_peg][-1]  # Top animal on source peg (smallest number)
-        top_to = state[to_peg][-1]      # Top animal on target peg (smallest number)
+        top_from = state[from_peg][-1]  
+        top_to = state[to_peg][-1]      
         
-        # Can only move smaller number (lighter animal) onto larger number (heavier animal)
+        # Can only move smaller number onto larger number
         return top_from < top_to
     
-    def step(self, state, from_peg, to_peg):
-        """Execute a single move from one peg to another"""
+    #Execute a single move from one peg to another
+    def step(self, state, from_peg, to_peg): 
         if not self.is_valid_move(state, from_peg, to_peg):
             return None
-        
         new_state = deepcopy(state)
         animal = new_state[from_peg].pop()  # Remove from top
         new_state[to_peg].append(animal)    # Add to top
         return new_state
-    
+    # Get all possible moves from current state
     def actions(self, state):
-        """Get all possible moves from current state"""
         moves = []
         for from_peg in range(3):
             for to_peg in range(3):
@@ -90,22 +78,22 @@ class AnimalStacker:
     def is_goal_state(self, state):
         return state == self.goal_state
     
-    def heuristic_misplaced(self, state):
-        """Count animals not on goal peg (peg 2)"""
+    # Heuristic: Count how many animals are not on the goal peg (peg 2)    
+    def heuristic(self, state):
         misplaced = 0
         for i in range(3):
-            if i != 2:  # Peg 0 and Peg 1 should be empty
+            if i != 2:        # Peg 0 and Peg 1 should be empty
                 misplaced += len(state[i])
         return misplaced
     
     def get_state_key(self, state):
         return tuple(tuple(peg) for peg in state)
-
+ 
 
 class BFS:
     def __init__(self, game):
         self.game = game
-        self.nodes_explored = 0
+        self.nodes_expanded = 0
         self.solution_path = []
         
     def search(self):
@@ -117,7 +105,7 @@ class BFS:
         
         while queue:
             current_state, path = queue.popleft()
-            self.nodes_explored += 1
+            self.nodes_expanded += 1
             
             if self.game.is_goal_state(current_state):
                 self.solution_path = path
@@ -136,7 +124,7 @@ class BFS:
 class DFS:
     def __init__(self, game, depth_limit=100)  :
         self.game = game
-        self.nodes_explored = 0
+        self.nodes_expanded = 0
         self.solution_path = []
         self.depth_limit = depth_limit
         
@@ -148,7 +136,7 @@ class DFS:
         
         while stack:
             current_state, path, depth, visited = stack.pop()
-            self.nodes_explored += 1
+            self.nodes_expanded += 1
             
             if self.game.is_goal_state(current_state):
                 self.solution_path = path
@@ -172,12 +160,12 @@ class DFS:
 class AStar:
     def __init__(self, game, heuristic_choice="misplaced"):
         self.game = game
-        self.nodes_explored = 0
+        self.nodes_expanded = 0
         self.solution_path = []
         self.heuristic_choice = heuristic_choice
         
     def heuristic(self, state):    
-        return self.game.heuristic_misplaced(state)
+        return self.game.heuristic(state)
     
     def search(self):
         start_state = self.game.state
@@ -196,7 +184,7 @@ class AStar:
                 continue
                 
             visited.add(current_key)
-            self.nodes_explored += 1
+            self.nodes_expanded += 1
             
             if self.game.is_goal_state(current_state):
                 self.solution_path = path
