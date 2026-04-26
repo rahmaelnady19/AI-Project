@@ -93,7 +93,7 @@ class AnimalStacker:
 class BFS:
     def __init__(self, game):
         self.game = game
-        self.nodes_expanded = 0
+        self.nodes_explored = 0
         self.solution_path = []
         
     def search(self):
@@ -105,7 +105,7 @@ class BFS:
         
         while queue:
             current_state, path = queue.popleft()
-            self.nodes_expanded += 1
+            self.nodes_explored += 1
             
             if self.game.is_goal_state(current_state):
                 self.solution_path = path
@@ -124,7 +124,7 @@ class BFS:
 class DFS:
     def __init__(self, game, depth_limit=100)  :
         self.game = game
-        self.nodes_expanded = 0
+        self.nodes_explored = 0
         self.solution_path = []
         self.depth_limit = depth_limit
         
@@ -136,7 +136,7 @@ class DFS:
         
         while stack:
             current_state, path, depth, visited = stack.pop()
-            self.nodes_expanded += 1
+            self.nodes_explored += 1
             
             if self.game.is_goal_state(current_state):
                 self.solution_path = path
@@ -160,7 +160,7 @@ class DFS:
 class AStar:
     def __init__(self, game, heuristic_choice="misplaced"):
         self.game = game
-        self.nodes_expanded = 0
+        self.nodes_explored = 0
         self.solution_path = []
         self.heuristic_choice = heuristic_choice
         
@@ -184,7 +184,7 @@ class AStar:
                 continue
                 
             visited.add(current_key)
-            self.nodes_expanded += 1
+            self.nodes_explored += 1
             
             if self.game.is_goal_state(current_state):
                 self.solution_path = path
