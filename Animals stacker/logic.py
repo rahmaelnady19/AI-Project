@@ -143,11 +143,11 @@ class DFS:
         return None
 
 class AStar:
-    def __init__(self, game, heuristic="misplaced"):
+    def __init__(self, game, heuristic_name="misplaced"):  
         self.game = game
         self.nodes_explored = 0
         self.solution_path = []
-        self.heuristic = heuristic
+        self.heuristic_name = heuristic_name
 
     def heuristic(self, state):
         return self.game.heuristic(state)
@@ -159,7 +159,7 @@ class AStar:
         counter = itertools.count()
         heap = []
         heapq.heappush(heap, (self.heuristic(start_state), next(counter), start_state, [], 0))
-
+        
         g_costs = {start_key: 0}
         visited = set()
 
